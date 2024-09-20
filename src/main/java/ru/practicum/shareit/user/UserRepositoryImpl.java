@@ -7,6 +7,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Data
 @Repository
@@ -29,11 +30,6 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean validationUserId(long userId) {
-        return users.containsKey(userId);
-    }
-
-    @Override
     public User updateUser(long userId, User user) {
         User userForUpdate = users.get(userId);
         if (user.getName() != null) {
@@ -47,12 +43,12 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User getUserById(long userId) {
-        return users.get(userId);
+    public Optional<User> getUserById(long userId) {
+        return Optional.ofNullable(users.get(userId));
     }
 
     @Override
-    public void deleteUserById(long userId) {
-        users.remove(userId);
+    public boolean deleteUserById(long userId) {
+        return users.remove(userId) != null;
     }
 }

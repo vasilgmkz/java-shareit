@@ -53,13 +53,17 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public List<ItemDto> getItemsFromUsers(Long userId) {
-        return items.values().stream().filter(x -> x.getOwner().getId().equals(userId)).map(ItemMapper::toItemDto).collect(Collectors.toList());
+        return items.values().stream()
+                .filter(x -> x.getOwner().getId().equals(userId))
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<ItemDto> search(String search) {
         return items.values().stream().filter(Item::getAvailable)
                 .filter(x -> x.getName().matches("(?i).*" + search + ".*") || x.getDescription().matches("(?i).*" + search + ".*"))
-                .map(ItemMapper::toItemDto).collect(Collectors.toList());
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 }

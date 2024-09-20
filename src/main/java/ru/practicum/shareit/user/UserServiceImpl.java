@@ -25,9 +25,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(long userId, User user) {
-        if (!userRepository.validationUserId(userId)) {
-            throw new NotFoundException("Пользователь с id " + userId + " не найден");
-        }
+        userRepository.getUserById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не найден"));
         if (userRepository.validationEmail(user) != 0) {
             throw new ConflictExceptions("Пользователь с email " + user.getEmail() + " существует");
         }
@@ -36,25 +34,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserDtoById(long userId) {
-        if (!userRepository.validationUserId(userId)) {
-            throw new NotFoundException("Пользователь с id " + userId + " не найден");
-        }
-        return UserMapper.mapToUserDto(userRepository.getUserById(userId));
+        return UserMapper.mapToUserDto(userRepository.getUserById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не найден")));
     }
 
     @Override
     public void deleteUserById(long userId) {
-        if (!userRepository.validationUserId(userId)) {
+        if (!userRepository.deleteUserById(userId)) {
             throw new NotFoundException("Пользователь с id " + userId + " не найден");
         }
-        userRepository.deleteUserById(userId);
     }
 
     @Override
     public User getUserById(long userId) {
-        if (!userRepository.validationUserId(userId)) {
-            throw new NotFoundException("Пользователь с id " + userId + " не найден");
-        }
-        return userRepository.getUserById(userId);
+        return userRepository.getUserById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не найден"));
     }
 }

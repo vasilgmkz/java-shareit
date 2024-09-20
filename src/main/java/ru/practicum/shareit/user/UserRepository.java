@@ -2,16 +2,16 @@ package ru.practicum.shareit.user;
 
 import ru.practicum.shareit.user.model.User;
 
+import java.util.Optional;
+
 public interface UserRepository {
     User addUser(User user);
 
     Long validationEmail(User user);
 
-    boolean validationUserId(long userId);
-
     User updateUser(long userId, User user);
 
-    User getUserById(long userId);
+    Optional<User> getUserById(long userId);
 
-    void deleteUserById(long userId);
+    boolean deleteUserById(long userId);
 }
