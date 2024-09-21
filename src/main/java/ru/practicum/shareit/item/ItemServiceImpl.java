@@ -26,8 +26,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto updateItem(Long userId, ItemDto itemDto, Long itemId) {
-        getItemById(userId, itemId);
-        Item item = itemRepository.getItemById(itemId).get();
+        userService.getUserById(userId);
+        Item item = itemRepository.getItemById(itemId).orElseThrow(() -> new NotFoundException("Вещь с id " + itemId + " не найдена"));
         if (!item.getOwner().getId().equals(userId)) {
             throw new ConflictExceptions("Вещь не пренадлежит пользователю с id " + userId);
         }
