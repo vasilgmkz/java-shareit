@@ -7,7 +7,7 @@ import java.util.Optional;
 public interface UserRepository {
     User addUser(User user);
 
-    Long validationEmail(User user);
+    boolean validationEmail(String userEmail);
 
     User updateUser(long userId, User user);
 

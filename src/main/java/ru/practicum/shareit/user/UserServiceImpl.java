@@ -17,7 +17,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto addUser(User user) {
-        if (userRepository.validationEmail(user) != 0) {
+        if (userRepository.validationEmail(user.getEmail())) {
             throw new ConflictExceptions("Пользователь с email " + user.getEmail() + " существует");
         }
         return UserMapper.mapToUserDto(userRepository.addUser(user));
@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(long userId, User user) {
         userRepository.getUserById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не найден"));
-        if (userRepository.validationEmail(user) != 0) {
+        if (userRepository.validationEmail(user.getEmail())) {
             throw new ConflictExceptions("Пользователь с email " + user.getEmail() + " существует");
         }
         return UserMapper.mapToUserDto(userRepository.updateUser(userId, user));

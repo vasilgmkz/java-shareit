@@ -15,6 +15,7 @@ public class ItemMapper {
         return itemDto;
     }
 
+
     public static Item fromItemDto(ItemDto itemDto) {
         Item item = new Item();
         item.setName(itemDto.getName());
@@ -23,3 +24,4 @@ public class ItemMapper {
         return item;
     }
 }
+
