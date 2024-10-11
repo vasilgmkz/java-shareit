@@ -1,21 +1,25 @@
 package ru.practicum.shareit.user.model;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import ru.practicum.shareit.validation.Marker;
 
 /**
  * TODO Sprint add-controllers.
  */
+@Entity
+@Table(name = "users")
 @Data
 @RequiredArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     Long id;
-    @NotNull (groups = Marker.AddUser.class)
+    @Column(name = "user_name")
     String name;
-    @NotNull (groups = Marker.AddUser.class)
-    @Email
+    @Column(name = "user_email", unique = true)
     String email;
 }

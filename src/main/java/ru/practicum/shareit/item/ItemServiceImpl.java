@@ -2,62 +2,95 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exceptions.ConflictExceptions;
+import ru.practicum.shareit.booking.BookingRepositoryJpa;
+import ru.practicum.shareit.exceptions.InternalServerException;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.mappers.ItemMapper;
+import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.mappers.CommentMapperMapStruct;
 import ru.practicum.shareit.item.mappers.ItemMapperMapStruct;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.user.UserRepositoryJpa;
 import ru.practicum.shareit.user.model.User;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    private final UserRepository userRepository;
-    private final ItemRepository itemRepository;
     private final ItemMapperMapStruct itemMapperMapStruct;
-
+    private final UserRepositoryJpa userRepositoryJpa;
+    private final ItemRepositoryJpa itemRepositoryJpa;
+    private final BookingRepositoryJpa bookingRepositoryJpa;
+    private final CommentRepositoryJpa commentRepositoryJpa;
+    private final CommentMapperMapStruct commentMapperMapStruct;
 
     @Override
-    public ItemDto addItem(Long userId, ItemDto itemDto) {
+    public ItemDto addItemJpa(Long userId, ItemDto itemDto) {
+        User owner = userRepositoryJpa.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь с " + userId + " не найден"));
         Item item = itemMapperMapStruct.fromItemDto(itemDto);
-        User user = userRepository.getUserById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не найден"));
-        return itemMapperMapStruct.toItemDto(itemRepository.addItem(user, item));
-    }
-
-    @Override
-    public ItemDto updateItem(Long userId, ItemDto itemDto, Long itemId) {
-        userRepository.getUserById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не найден"));
-        Item item = itemRepository.getItemById(itemId).orElseThrow(() -> new NotFoundException("Вещь с id " + itemId + " не найдена"));
-        if (!item.getOwner().getId().equals(userId)) {
-            throw new ConflictExceptions("Вещь не пренадлежит пользователю с id " + userId);
+        item.setOwner(owner);
+        Long id = itemRepositoryJpa.save(item).getId();
+        if (id == null) {
+            throw new InternalServerException("Не удалось сохранить данные");
         }
-        return itemMapperMapStruct.toItemDto(itemRepository.updateItem(item, itemDto));
+        item.setId(id);
+        return itemMapperMapStruct.toItemDto(item);
     }
 
     @Override
-    public ItemDto getItemById(Long userId, Long itemId) {
-        userRepository.getUserById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не найден"));
-        return itemMapperMapStruct.toItemDto(itemRepository.getItemById(itemId).orElseThrow(() -> new NotFoundException("Вещь с id " + itemId + " не найдена")));
+    public ItemDto updateItemJpa(Long userId, ItemDto itemDto, Long itemId) {
+        Item itemFrom = itemRepositoryJpa.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь с " + itemId + " не найдена"));
+        if (!itemFrom.getOwner().getId().equals(userId)) {
+            throw new NotFoundException("Вещь не пренадлежит пользователю с id " + userId);
+        }
+        if (itemDto.getName() != null) {
+            itemFrom.setName(itemDto.getName());
+        }
+        if (itemDto.getDescription() != null) {
+            itemFrom.setDescription(itemDto.getDescription());
+        }
+        if (itemDto.getAvailable() != null) {
+            itemFrom.setAvailable(itemDto.getAvailable());
+        }
+        itemRepositoryJpa.save(itemFrom);
+        return itemMapperMapStruct.toItemDto(itemFrom);
     }
 
     @Override
-    public List<ItemDto> getItemsFromUsers(Long userId) {
-        userRepository.getUserById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не найден"));
-        return itemRepository.getItemsFromUsers(userId);
+    public ItemDtoWithCommentAndDate getItemByIdJpa(Long userId, Long itemId) {
+        return itemMapperMapStruct.toItemDtoWithCommentAndDate(itemRepositoryJpa.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь с " + itemId + " не найдена")));
     }
 
     @Override
-    public List<ItemDto> search(String search, Long userId) {
-        userRepository.getUserById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не найден"));
+    public List<ItemDtoWithCommentAndDate> getItemsFromUsersJpa(Long userId) {
+        return itemMapperMapStruct.toItemsDtoWithCommentAndDate(itemRepositoryJpa.findByOwnerId(userId));
+    }
+
+    @Override
+    public List<ItemDto> searchJpa(String search, Long userId) {
         if (search.isEmpty()) {
             return new ArrayList<>();
         }
-        return itemRepository.search(search);
+        return itemMapperMapStruct.toItemDtoList(itemRepositoryJpa.searchJpa(search));
     }
+
+    @Override
+    public CommentDtoInConsole addComment(CommentDtoFromConsole commentDtoFromConsole) {
+        Item item = itemRepositoryJpa.findById(commentDtoFromConsole.getItemId()).orElseThrow(() -> new NotFoundException("Вещь с " + commentDtoFromConsole.getItemId() + " не найдена"));
+        User author = userRepositoryJpa.findById(commentDtoFromConsole.getUserId()).orElseThrow(() -> new NotFoundException("Пользователь с " + commentDtoFromConsole.getUserId() + " не найден"));
+        Comment comment = commentMapperMapStruct.inComment(commentDtoFromConsole);
+        long checkForAddComment = bookingRepositoryJpa.checkForAddComment(commentDtoFromConsole.getItemId(), commentDtoFromConsole.getUserId(), Instant.now().plusSeconds(10800));
+        if (checkForAddComment == 0) {
+            throw new InternalServerException("Ошибка валидации при добавлении комментария. Возможно пользователь не брал вещь в аренду");
+        }
+        comment.setAuthor(author);
+        comment.setItem(item);
+        Long id = commentRepositoryJpa.save(comment).getId();
+        comment.setId(id);
+        return commentMapperMapStruct.fromComment(comment);
+    }
+
 }
