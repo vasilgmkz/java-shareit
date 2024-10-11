@@ -91,7 +91,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepositoryJpa.findById(commentDtoFromConsole.getItemId()).orElseThrow(() -> new NotFoundException("Вещь с " + commentDtoFromConsole.getItemId() + " не найдена"));
         User author = userRepositoryJpa.findById(commentDtoFromConsole.getUserId()).orElseThrow(() -> new NotFoundException("Пользователь с " + commentDtoFromConsole.getUserId() + " не найден"));
         Comment comment = commentMapperMapStruct.inComment(commentDtoFromConsole);
-        long checkForAddComment = bookingRepositoryJpa.checkForAddComment(commentDtoFromConsole.getItemId(), commentDtoFromConsole.getUserId(), Instant.now().plusSeconds(10800));
+        long checkForAddComment = bookingRepositoryJpa.checkForAddComment(commentDtoFromConsole.getItemId(), commentDtoFromConsole.getUserId(), Instant.now());
         if (checkForAddComment == 0) {
             throw new InternalServerException("Ошибка валидации при добавлении комментария. Возможно пользователь не брал вещь в аренду");
         }

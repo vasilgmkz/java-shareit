@@ -84,13 +84,13 @@ public class BookingServiceImpl implements BookingService {
                 return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findAllBookingsById(userId));
             }
             case CURRENT -> {
-                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findCurrentBookingsById(userId, Instant.now().plusSeconds(10800)));
+                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findCurrentBookingsById(userId, Instant.now()));
             }
             case PAST -> {
-                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findPastBookingsById(userId, Instant.now().plusSeconds(10800)));
+                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findPastBookingsById(userId, Instant.now()));
             }
             case FUTURE -> {
-                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findFutureBookingsById(userId, Instant.now().plusSeconds(10800)));
+                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findFutureBookingsById(userId, Instant.now()));
             }
             case WAITING -> {
                 return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findWaitingBookingsById(userId));
@@ -112,13 +112,13 @@ public class BookingServiceImpl implements BookingService {
                 return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findAllBookingsForItemsById(userId));
             }
             case CURRENT -> {
-                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findCurrentBookingsForItemsById(userId, Instant.now().plusSeconds(10800)));
+                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findCurrentBookingsForItemsById(userId, Instant.now()));
             }
             case PAST -> {
-                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findPastBookingsForItemsById(userId, Instant.now().plusSeconds(10800)));
+                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findPastBookingsForItemsById(userId, Instant.now()));
             }
             case FUTURE -> {
-                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findFutureBookingsForItemsById(userId, Instant.now().plusSeconds(10800)));
+                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findFutureBookingsForItemsById(userId, Instant.now()));
             }
             case WAITING -> {
                 return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findWaitingBookingsForItemsById(userId));

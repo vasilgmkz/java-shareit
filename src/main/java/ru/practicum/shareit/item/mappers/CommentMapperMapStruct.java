@@ -16,7 +16,7 @@ import java.util.List;
         Instant.class
 })
 public interface CommentMapperMapStruct {
-    @Mapping(target = "created", expression = "java(Instant.now().plusSeconds(10800))")
+    @Mapping(target = "created", expression = "java(Instant.now())")
     Comment inComment(CommentDtoFromConsole commentDtoFromConsole);
 
     @Mapping(target = "created", qualifiedByName = {"CommentMapperMapStructUtil", "fromInstant"}, source = "created")
