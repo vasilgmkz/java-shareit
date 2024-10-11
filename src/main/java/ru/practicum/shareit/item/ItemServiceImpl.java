@@ -5,7 +5,10 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.BookingRepositoryJpa;
 import ru.practicum.shareit.exceptions.InternalServerException;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.dto.CommentDtoFromConsole;
+import ru.practicum.shareit.item.dto.CommentDtoInConsole;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoWithCommentAndDate;
 import ru.practicum.shareit.item.mappers.CommentMapperMapStruct;
 import ru.practicum.shareit.item.mappers.ItemMapperMapStruct;
 import ru.practicum.shareit.item.model.Comment;
@@ -62,7 +65,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDtoWithCommentAndDate getItemByIdJpa(long userId, Long itemId) {
         Item item = itemRepositoryJpa.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь с " + itemId + " не найдена"));
-        ItemDtoWithCommentAndDate  itemDtoWithCommentAndDate= itemMapperMapStruct.toItemDtoWithCommentAndDate(item);
+        ItemDtoWithCommentAndDate  itemDtoWithCommentAndDate = itemMapperMapStruct.toItemDtoWithCommentAndDate(item);
         if (item.getOwner().getId() != userId) {
             itemDtoWithCommentAndDate.setLastBooking(null);
             itemDtoWithCommentAndDate.setNextBooking(null);
