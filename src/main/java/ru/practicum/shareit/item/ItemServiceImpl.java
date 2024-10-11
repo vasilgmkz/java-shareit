@@ -60,8 +60,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDtoWithCommentAndDate getItemByIdJpa(Long userId, Long itemId) {
-        return itemMapperMapStruct.toItemDtoWithCommentAndDate(itemRepositoryJpa.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь с " + itemId + " не найдена")));
+    public ItemDtoWithCommentAndDate getItemByIdJpa(long userId, Long itemId) {
+        Item item = itemRepositoryJpa.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь с " + itemId + " не найдена"));
+        ItemDtoWithCommentAndDate  itemDtoWithCommentAndDate= itemMapperMapStruct.toItemDtoWithCommentAndDate(item);
+        if (item.getOwner().getId() != userId) {
+            itemDtoWithCommentAndDate.setLastBooking(null);
+            itemDtoWithCommentAndDate.setNextBooking(null);
+        }
+        return itemDtoWithCommentAndDate;
     }
 
     @Override

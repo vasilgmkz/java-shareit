@@ -27,23 +27,23 @@ public interface ItemMapperMapStruct {
     List<ItemDto> toItemDtoList(List<Item> itemList);
 
     @Mapping(target = "request", qualifiedByName = {"ItemMapperMapStructUtil", "requestConvertor"}, source = "request")
-    @Mapping(target = "lastBooking", qualifiedByName = {"ItemMapperMapStructUtil", "getLastBooking"}, source = "id")
-    @Mapping(target = "nearestBooking", qualifiedByName = {"ItemMapperMapStructUtil", "getNearestBooking"}, source = "id")
+    @Mapping(target = "lastBooking", qualifiedByName = {"ItemMapperMapStructUtil", "getLastBooking"}, source = "item")
+    @Mapping(target = "nearestBooking", qualifiedByName = {"ItemMapperMapStructUtil", "getNearestBooking"}, source = "item")
     ItemDtoWithDate toItemDtoWithDate(Item item);
 
     @Mapping(target = "request", qualifiedByName = {"ItemMapperMapStructUtil", "requestConvertor"}, source = "request")
-    @Mapping(target = "lastBooking", qualifiedByName = {"ItemMapperMapStructUtil", "getLastBooking"}, source = "id")
-    @Mapping(target = "nearestBooking", qualifiedByName = {"ItemMapperMapStructUtil", "getNearestBooking"}, source = "id")
+    @Mapping(target = "lastBooking", qualifiedByName = {"ItemMapperMapStructUtil", "getLastBooking"}, source = "item")
+    @Mapping(target = "nearestBooking", qualifiedByName = {"ItemMapperMapStructUtil", "getNearestBooking"}, source = "item")
     List<ItemDtoWithDate> toItemsDtoWithDate(List<Item> itemList);
 
-    @Mapping(target = "lastBooking", qualifiedByName = {"ItemMapperMapStructUtil", "getLastBooking"}, source = "id")
-    @Mapping(target = "nextBooking", qualifiedByName = {"ItemMapperMapStructUtil", "getNearestBooking"}, source = "id")
+    @Mapping(target = "lastBooking", qualifiedByName = {"ItemMapperMapStructUtil", "getLastBooking"}, source = ("item"))
+    @Mapping(target = "nextBooking", qualifiedByName = {"ItemMapperMapStructUtil", "getNearestBooking"}, source = "item")
     @Mapping(target = "request", qualifiedByName = {"ItemMapperMapStructUtil", "requestConvertor"}, source = "request")
     @Mapping(target = "comments", qualifiedByName = {"ItemMapperMapStructUtil", "getCommentsForItem"}, source = "id")
     ItemDtoWithCommentAndDate toItemDtoWithCommentAndDate(Item item);
 
-    @Mapping(target = "lastBooking", qualifiedByName = {"ItemMapperMapStructUtil", "getLastBooking"}, source = "id")
-    @Mapping(target = "nextBooking", qualifiedByName = {"ItemMapperMapStructUtil", "getNearestBooking"}, source = "id")
+    @Mapping(target = "lastBooking", qualifiedByName = {"ItemMapperMapStructUtil", "getLastBooking"}, source = "item")
+    @Mapping(target = "nextBooking", qualifiedByName = {"ItemMapperMapStructUtil", "getNearestBooking"}, source = "item")
     @Mapping(target = "request", qualifiedByName = {"ItemMapperMapStructUtil", "requestConvertor"}, source = "request")
     @Mapping(target = "comments", qualifiedByName = {"ItemMapperMapStructUtil", "getCommentsForItem"}, source = "id")
     List<ItemDtoWithCommentAndDate> toItemsDtoWithCommentAndDate(List<Item> items);

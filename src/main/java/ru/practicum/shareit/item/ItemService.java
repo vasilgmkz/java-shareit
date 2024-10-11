@@ -12,7 +12,7 @@ interface ItemService {
 
     ItemDto addItemJpa(Long userId, ItemDto itemDto);
 
-    ItemDtoWithCommentAndDate getItemByIdJpa(Long userId, Long itemId);
+    ItemDtoWithCommentAndDate getItemByIdJpa(long userId, Long itemId);
 
     List<ItemDtoWithCommentAndDate> getItemsFromUsersJpa(Long userId);
 

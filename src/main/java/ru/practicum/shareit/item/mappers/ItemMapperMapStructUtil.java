@@ -7,7 +7,9 @@ import ru.practicum.shareit.booking.BookingRepositoryJpa;
 import ru.practicum.shareit.item.CommentRepositoryJpa;
 import ru.practicum.shareit.item.dto.CommentDtoInConsole;
 import ru.practicum.shareit.item.model.Comment;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -29,7 +31,8 @@ public class ItemMapperMapStructUtil {
     }
 
     @Named("getLastBooking")
-    LocalDateTime getLastBooking(Long itemId) {
+    LocalDateTime getLastBooking(Item item) {
+        long itemId = item.getId();
         Instant instant = bookingRepositoryJpa.findLastBookingsForItem(itemId, Instant.now().plusSeconds(10800));
         if (instant == null) {
             return null;
@@ -38,7 +41,8 @@ public class ItemMapperMapStructUtil {
     }
 
     @Named("getNearestBooking")
-    LocalDateTime getNearestBooking(Long itemId) {
+    LocalDateTime getNearestBooking(Item item) {
+        long itemId = item.getId();
         Instant instant = bookingRepositoryJpa.findNearestBookingsForItem(itemId, Instant.now().plusSeconds(10800));
         if (instant == null) {
             return null;
