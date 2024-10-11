@@ -6,9 +6,9 @@ spring:
     properties:
       hibernate.jdbc.time_zone: UTC
   datasource:
-    username: "dbuser"
-    password: "12345"
-    url: "jdbc:postgresql://localhost:5432/shareit"
+    username: "shareit"
+    password: "shareit"
+    url: "jdbc:postgresql://localhost:5433/shareit"
     driver-class-name: "org.postgresql.Driver"
     sql:
       init:
