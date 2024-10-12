@@ -9,14 +9,16 @@ import ru.practicum.shareit.item.dto.CommentDtoInConsole;
 import ru.practicum.shareit.item.model.Comment;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {CommentMapperMapStructUtil.class}, imports = {
-        Instant.class
+        Instant.class, ZoneOffset.class, LocalDateTime.class
 })
 public interface CommentMapperMapStruct {
-    @Mapping(target = "created", expression = "java(Instant.now())")
+    @Mapping(target = "created", expression = "java(LocalDateTime.now().toInstant(ZoneOffset.UTC))")
     Comment inComment(CommentDtoFromConsole commentDtoFromConsole);
 
     @Mapping(target = "created", qualifiedByName = {"CommentMapperMapStructUtil", "fromInstant"}, source = "created")

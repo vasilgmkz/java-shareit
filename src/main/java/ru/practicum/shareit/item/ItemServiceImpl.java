@@ -16,7 +16,8 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepositoryJpa;
 import ru.practicum.shareit.user.model.User;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDtoWithCommentAndDate getItemByIdJpa(long userId, Long itemId) {
         Item item = itemRepositoryJpa.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь с " + itemId + " не найдена"));
-        ItemDtoWithCommentAndDate  itemDtoWithCommentAndDate = itemMapperMapStruct.toItemDtoWithCommentAndDate(item);
+        ItemDtoWithCommentAndDate itemDtoWithCommentAndDate = itemMapperMapStruct.toItemDtoWithCommentAndDate(item);
         if (item.getOwner().getId() != userId) {
             itemDtoWithCommentAndDate.setLastBooking(null);
             itemDtoWithCommentAndDate.setNextBooking(null);
@@ -91,7 +92,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepositoryJpa.findById(commentDtoFromConsole.getItemId()).orElseThrow(() -> new NotFoundException("Вещь с " + commentDtoFromConsole.getItemId() + " не найдена"));
         User author = userRepositoryJpa.findById(commentDtoFromConsole.getUserId()).orElseThrow(() -> new NotFoundException("Пользователь с " + commentDtoFromConsole.getUserId() + " не найден"));
         Comment comment = commentMapperMapStruct.inComment(commentDtoFromConsole);
-        long checkForAddComment = bookingRepositoryJpa.checkForAddComment(commentDtoFromConsole.getItemId(), commentDtoFromConsole.getUserId(), Instant.now());
+        long checkForAddComment = bookingRepositoryJpa.checkForAddComment(commentDtoFromConsole.getItemId(), commentDtoFromConsole.getUserId(), LocalDateTime.now().toInstant(ZoneOffset.UTC));
         if (checkForAddComment == 0) {
             throw new InternalServerException("Ошибка валидации при добавлении комментария. Возможно пользователь не брал вещь в аренду");
         }

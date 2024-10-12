@@ -12,7 +12,8 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepositoryJpa;
 import ru.practicum.shareit.user.model.User;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 
@@ -26,16 +27,16 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDtoInConsole addBookingJpa(BookingDtoFromConsole bookingDtoFromConsole, long userId) {
-        Item item = itemRepositoryJpa.findById(bookingDtoFromConsole.getItemId()).orElseThrow(() -> new NotFoundException("Вещь с " + bookingDtoFromConsole.getItemId() + " не найдена"));
-        User booker = userRepositoryJpa.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь с " + userId + " не найден"));
-        Booking booking = bookingMapperMapStruct.fromBookingDtoFromConsole(bookingDtoFromConsole);
-        long checkIntersection = bookingRepositoryJpa.checkIntersection(item.getId(), booking.getStart(), booking.getEnd());
+        if (bookingDtoFromConsole.getStart().equals(bookingDtoFromConsole.getEnd())) {
+            throw new InternalServerException("Начало бронирования не должно совпадать с концом бронирования");
+        }
+        long checkIntersection = bookingRepositoryJpa.checkIntersection(bookingDtoFromConsole.getItemId(), bookingDtoFromConsole.getStart().toInstant(ZoneOffset.UTC), bookingDtoFromConsole.getEnd().toInstant(ZoneOffset.UTC));
         if (checkIntersection != 0) {
             throw new InternalServerException("Добавляемое бронирование пересекается с имеющимися бронированиями");
         }
-        if (booking.getStart().equals(booking.getEnd())) {
-            throw new InternalServerException("Начало бронирования не должно совпадать с концом бронирования");
-        }
+        Item item = itemRepositoryJpa.findById(bookingDtoFromConsole.getItemId()).orElseThrow(() -> new NotFoundException("Вещь с " + bookingDtoFromConsole.getItemId() + " не найдена"));
+        User booker = userRepositoryJpa.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь с " + userId + " не найден"));
+        Booking booking = bookingMapperMapStruct.fromBookingDtoFromConsole(bookingDtoFromConsole);
         booking.setItem(item);
         booking.setBooker(booker);
         booking.setStatus(Booking.BookingType.WAITING);
@@ -84,13 +85,13 @@ public class BookingServiceImpl implements BookingService {
                 return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findAllBookingsById(userId));
             }
             case CURRENT -> {
-                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findCurrentBookingsById(userId, Instant.now()));
+                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findCurrentBookingsById(userId, LocalDateTime.now().toInstant(ZoneOffset.UTC)));
             }
             case PAST -> {
-                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findPastBookingsById(userId, Instant.now()));
+                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findPastBookingsById(userId, LocalDateTime.now().toInstant(ZoneOffset.UTC)));
             }
             case FUTURE -> {
-                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findFutureBookingsById(userId, Instant.now()));
+                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findFutureBookingsById(userId, LocalDateTime.now().toInstant(ZoneOffset.UTC)));
             }
             case WAITING -> {
                 return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findWaitingBookingsById(userId));
@@ -112,13 +113,13 @@ public class BookingServiceImpl implements BookingService {
                 return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findAllBookingsForItemsById(userId));
             }
             case CURRENT -> {
-                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findCurrentBookingsForItemsById(userId, Instant.now()));
+                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findCurrentBookingsForItemsById(userId, LocalDateTime.now().toInstant(ZoneOffset.UTC)));
             }
             case PAST -> {
-                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findPastBookingsForItemsById(userId, Instant.now()));
+                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findPastBookingsForItemsById(userId, LocalDateTime.now().toInstant(ZoneOffset.UTC)));
             }
             case FUTURE -> {
-                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findFutureBookingsForItemsById(userId, Instant.now()));
+                return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findFutureBookingsForItemsById(userId, LocalDateTime.now().toInstant(ZoneOffset.UTC)));
             }
             case WAITING -> {
                 return bookingMapperMapStruct.fromBookings(bookingRepositoryJpa.findWaitingBookingsForItemsById(userId));

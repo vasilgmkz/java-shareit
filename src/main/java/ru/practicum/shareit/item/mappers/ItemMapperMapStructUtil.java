@@ -32,7 +32,7 @@ public class ItemMapperMapStructUtil {
     @Named("getLastBooking")
     LocalDateTime getLastBooking(Item item) {
         long itemId = item.getId();
-        Instant instant = bookingRepositoryJpa.findLastBookingsForItem(itemId, Instant.now());
+        Instant instant = bookingRepositoryJpa.findLastBookingsForItem(itemId, LocalDateTime.now().toInstant(ZoneOffset.UTC));
         if (instant == null) {
             return null;
         }
@@ -42,7 +42,7 @@ public class ItemMapperMapStructUtil {
     @Named("getNearestBooking")
     LocalDateTime getNearestBooking(Item item) {
         long itemId = item.getId();
-        Instant instant = bookingRepositoryJpa.findNearestBookingsForItem(itemId, Instant.now());
+        Instant instant = bookingRepositoryJpa.findNearestBookingsForItem(itemId, LocalDateTime.now().toInstant(ZoneOffset.UTC));
         if (instant == null) {
             return null;
         }
