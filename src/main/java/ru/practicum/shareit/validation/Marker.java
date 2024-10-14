@@ -13,5 +13,11 @@ public interface Marker {
     interface UpdateUser {
     }
 
+    interface AddBooking {
+    }
+
+    interface UpdateBooking {
+    }
+
 }
 
