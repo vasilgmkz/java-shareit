@@ -6,8 +6,6 @@ import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 /**
  * TODO Sprint add-item-requests.
@@ -23,9 +21,9 @@ public class ItemRequest {
     private Long id;
     @Column(name = "request_description")
     private String description;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User requestor;
     @Column(name = "request_created")
-    private Instant created = LocalDateTime.now().toInstant(ZoneOffset.UTC);
+    private Instant created;
 }

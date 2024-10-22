@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.BookingRepositoryJpa;
+import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.CommentRepositoryJpa;
 import ru.practicum.shareit.item.dto.CommentDtoInConsole;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepositoryJpa;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -22,6 +25,7 @@ public class ItemMapperMapStructUtil {
     private final BookingRepositoryJpa bookingRepositoryJpa;
     private final CommentRepositoryJpa commentRepositoryJpa;
     private final CommentMapperMapStruct commentMapperMapStruct;
+    private final ItemRequestRepositoryJpa itemRequestRepositoryJpa;
 
 
     @Named("requestConvertor")
@@ -58,5 +62,13 @@ public class ItemMapperMapStructUtil {
     List<CommentDtoInConsole> getCommentsForItem(long itemId) {
         List<Comment> comments = commentRepositoryJpa.getCommentsForItem(itemId);
         return commentMapperMapStruct.fromComments(comments);
+    }
+
+    @Named("inRequestConvertor")
+    ItemRequest inRequestConvertor (ItemDto itemDto) {
+        if (itemDto.getRequestId() == null) {
+            return null;
+        }
+        return itemRequestRepositoryJpa.findById(itemDto.getRequestId()).orElseThrow(() -> new NotFoundException("Запрос с id " + itemDto.getRequestId() + " не найден"));
     }
 }

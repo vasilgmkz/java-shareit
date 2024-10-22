@@ -60,4 +60,12 @@ public class ItemController {
     public List<ItemDto> search(@RequestHeader("X-Sharer-User-Id") long userId, @RequestParam(name = "text") String text) {
         return itemService.searchJpa(text, userId);
     }
+
+    @PostMapping("/{requestId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Validated(Marker.AddItem.class)
+    public ItemDto addItemWithRequest(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody @Valid ItemDto itemDto, @PathVariable("requestId") long requestId) {
+        itemDto.setRequestId(requestId);
+        return itemService.addItemJpa(userId, itemDto);
+    }
 }

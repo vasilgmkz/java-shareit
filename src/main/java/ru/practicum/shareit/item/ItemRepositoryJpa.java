@@ -12,4 +12,16 @@ public interface ItemRepositoryJpa extends JpaRepository<Item, Long> {
 
     @Query(value = "select it from Item as it where it.available = true and (lower(it.name) like lower(concat('%',:search,'%')) or lower(it.description) like lower(concat('%',:search,'%')))")
     List<Item> searchJpa(@Param("search") String search);
+
+    @Query(value = "select it from Item as it " +
+            "join it.request as re " +
+            "join re.requestor as req " +
+            "where req.id = :userId " +
+            "ORDER BY re.created asc")
+    List<Item> getItemRequestsUserId(@Param("userId") Long userId);
+
+    @Query(value = "select it from Item as it " +
+            "join it.request as re " +
+            "where re.id = :requestId")
+    List<Item> getItemRequestsId(@Param("requestId") Long requestId);
 }
