@@ -80,11 +80,11 @@ class BookingServiceImplTest {
         NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> bookingService.getBookingById(1, 10));
         assertEquals(exception.getMessage(), "Бронирование с 10 не найдено");
         BookingDtoInConsole bookingDtoInConsole = bookingService.getBookingById(2, 1);
-        assertEquals(bookingDtoInConsole.getStart(), LocalDateTime.of(2024, 10, 22, 8, 10, 00));
+        assertEquals(bookingDtoInConsole.getStart(), LocalDateTime.of(2024, 10, 22, 11, 10, 00));
         InternalServerException exception2 = Assertions.assertThrows(InternalServerException.class, () -> bookingService.getBookingById(1, 2));
         assertEquals(exception2.getMessage(), "У пользователей нет прав на получение бронирования с id 2");
         BookingDtoInConsole bookingDtoInConsole1 = bookingService.getBookingById(1, 1);
-        assertEquals(bookingDtoInConsole1.getStart(), LocalDateTime.of(2024, 10, 22, 8, 10, 00));
+        assertEquals(bookingDtoInConsole1.getStart(), LocalDateTime.of(2024, 10, 22, 11, 10, 00));
     }
 
     @Test
