@@ -27,9 +27,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDtoInConsole addBookingJpa(BookingDtoFromConsole bookingDtoFromConsole, long userId) {
-        if (bookingDtoFromConsole.getStart().equals(bookingDtoFromConsole.getEnd())) {
-            throw new InternalServerException("Начало бронирования не должно совпадать с концом бронирования");
-        }
         long checkIntersection = bookingRepositoryJpa.checkIntersection(bookingDtoFromConsole.getItemId(), bookingDtoFromConsole.getStart().toInstant(ZoneOffset.UTC), bookingDtoFromConsole.getEnd().toInstant(ZoneOffset.UTC));
         if (checkIntersection != 0) {
             throw new InternalServerException("Добавляемое бронирование пересекается с имеющимися бронированиями");

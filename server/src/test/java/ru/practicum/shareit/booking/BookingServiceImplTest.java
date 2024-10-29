@@ -39,9 +39,6 @@ class BookingServiceImplTest {
     @Test
     @DisplayName("Создание бронирования")
     void testAddBookingJpa() {
-        bookingDtoFromConsole.setEnd(LocalDateTime.of(2024, 10, 24, 10, 00, 00));
-        InternalServerException exception = Assertions.assertThrows(InternalServerException.class, () -> bookingService.addBookingJpa(bookingDtoFromConsole, userId));
-        assertEquals(exception.getMessage(), "Начало бронирования не должно совпадать с концом бронирования");
         bookingDtoFromConsole.setStart(LocalDateTime.of(2024, 10, 28, 8, 00, 00));
         bookingDtoFromConsole.setEnd(LocalDateTime.of(2024, 10, 28, 15, 00, 00));
         InternalServerException exception1 = Assertions.assertThrows(InternalServerException.class, () -> bookingService.addBookingJpa(bookingDtoFromConsole, userId - 2));
