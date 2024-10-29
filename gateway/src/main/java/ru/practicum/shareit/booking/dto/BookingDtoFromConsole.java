@@ -24,8 +24,12 @@ public class BookingDtoFromConsole {
     LocalDateTime end;
 
     @AssertTrue(message = "Начало бронирования не должно совпадать с концом бронирования")
-    boolean isStartEqualsEnd() {return !start.equals(end);}
+    boolean isStartEqualsEnd() {
+        return !start.equals(end);
+    }
 
     @AssertTrue(message = "Начало бронирования не должно быть позже конца бронирования")
-    boolean isStartBeforeEnd() {return start.isBefore(end);}
+    boolean isStartBeforeEnd() {
+        return start.isBefore(end);
+    }
 }
